@@ -1,0 +1,4 @@
+name: Plugin
+version: ${project.version}
+main: info.beastsoftware.core.plugin.BeasCorePlugin
+api-version: 1.13
