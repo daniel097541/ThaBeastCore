@@ -27,6 +27,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
@@ -35,6 +38,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PrinterFeatureListener extends AbstractFeatureListener {
 
@@ -150,6 +154,23 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
         e.setCancelled(true);
         player.getBukkitPlayer().closeInventory();
         player.sms(config.getConfig().getString("Settings.Messages.cant-drop-items"));
+
+        ItemStack itemStack = e.getItemDrop().getItemStack();
+
+        if(itemStack.hasItemMeta()){
+            e.getItemDrop().setItemStack(null);
+            for(int slot = 0; slot < player.getInventory().getSize(); slot++){
+                ItemStack inSlot = player.getInventory().getItem(slot);
+                if(Objects.nonNull(inSlot)){
+                    if(economyUtil.getPriceBuyShopGuiPlus(itemStack, player.getBukkitPlayer()) <= 0.0){
+                        player.getInventory().setItem(slot, null);
+                    }
+                    else{
+                        player.getInventory().setItem(slot, new ItemStack(itemStack.getType(), itemStack.getAmount()));
+                    }
+                }
+            }
+        }
     }
 
 
@@ -174,7 +195,7 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
         }
 
         e.setCancelled(true);
-        player.sms( config.getConfig().getString("Settings.Messages.cant-teleport-in-printer-mode"));
+        player.sms(config.getConfig().getString("Settings.Messages.cant-teleport-in-printer-mode"));
     }
 
 
@@ -233,11 +254,10 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
         ItemStack itemStack = new ItemStack(material);
 
 
-
         //remove nbt metadata always
         BlockState blockState = block.getState();
 
-        if(this.removeNBT()) {
+        if (this.removeNBT()) {
             this.nbtManager.removeNBTMetadata(blockState);
         }
 
@@ -315,7 +335,6 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
     }
 
 
-
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
         BeastPlayer player = this.getPlayer(e.getPlayer());
@@ -373,7 +392,7 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
         return this.config.getConfig().getBoolean("Settings.disable-blocks-with-inventory-inside");
     }
 
-    private boolean removeNBT(){
+    private boolean removeNBT() {
         return this.config.getConfig().getBoolean("Settings.remove-nbt-tags");
     }
 
@@ -386,12 +405,15 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
 
         ItemStack itemStack = e.getPlayer().getItemInHand();
 
-        //remove nbt metadata from item
-        if(this.removeNBT()) {
-            if (nbtManager.itemHasNBT(itemStack)) {
-                itemStack = nbtManager.removeNBTData(itemStack);
-                player.setItemInHand(null);
-            }
+        if(itemStack.getType().equals(Material.AIR)){
+            return;
+        }
+
+        //block when item has meta
+        if(itemStack.hasItemMeta()){
+            e.setCancelled(true);
+            player.sms(config.getConfig().getString("Settings.Messages.blocked-interaction"));
+            return;
         }
 
         //is exp bottle
@@ -497,6 +519,86 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
         message = StrUtils.replacePlaceholder(message, "{money}", String.valueOf(spent));
 
         player.sms(message);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onHangingBreak(HangingBreakByEntityEvent event) {
+        if (!(event.getRemover() instanceof Player)) {
+            return;
+        }
+        BeastPlayer player = getPlayer((Player) event.getRemover());
+
+        if (isOnPrinter(player)) {
+            event.setCancelled(true);
+            player.sms(config.getConfig().getString("Settings.Messages.blocked-interaction"));
+        }
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onHangingPlace(HangingPlaceEvent event) {
+        BeastPlayer player = getPlayer(Objects.requireNonNull(event.getPlayer()));
+        if (isOnPrinter(player)) {
+            event.setCancelled(true);
+            player.sms(config.getConfig().getString("Settings.Messages.blocked-interaction"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBucketEmptyEvent(PlayerBucketEmptyEvent event) {
+        BeastPlayer player = getPlayer(Objects.requireNonNull(event.getPlayer()));
+        if (isOnPrinter(player)) {
+            event.setCancelled(true);
+            player.sms(config.getConfig().getString("Settings.Messages.blocked-interaction"));
+        }
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBucketFillEvent(PlayerBucketFillEvent event) {
+        BeastPlayer player = getPlayer(Objects.requireNonNull(event.getPlayer()));
+        if (isOnPrinter(player)) {
+            event.setCancelled(true);
+            player.sms(config.getConfig().getString("Settings.Messages.blocked-interaction"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onClick(InventoryClickEvent event) {
+
+
+        if (event.getWhoClicked() instanceof Player) {
+
+            BeastPlayer player = this.getPlayer((Player) event.getWhoClicked());
+
+            if (isOnPrinter(player)) {
+
+                if (Objects.nonNull(event.getCurrentItem())) {
+                    event.getCurrentItem().setItemMeta(null);
+                }
+
+                if (Objects.nonNull(event.getCursor())) {
+                    event.getCursor().setItemMeta(null);
+                }
+            }
+        }
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onHeld(PlayerItemHeldEvent event) {
+        BeastPlayer player = this.getPlayer(event.getPlayer());
+        if (this.isOnPrinter(player)) {
+            ItemStack item = player.getInventory().getItem(event.getNewSlot());
+            if (Objects.isNull(item)
+                    || item.getType().equals(Material.AIR)) {
+                return;
+            }
+            if (item.hasItemMeta() || item.getType().equals(Material.POTION)) {
+                player.sms(config.getConfig().getString("Settings.Messages.blocked-interaction"));
+                player.getInventory().setItem(event.getNewSlot(), new ItemStack(Material.AIR));
+            }
+        }
     }
 
 }
