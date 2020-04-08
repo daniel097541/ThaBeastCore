@@ -1,0 +1,123 @@
+name: BeastCore
+version: ${project.version}
+main: info.beastsoftware.beastcore.BeastCore
+softdepend: [SilkSpawners, Factions, LegacyFactions, MCore, PlaceholderAPI, Vault, ProtocolLib, HolographicDisplays, BeastFactions]
+authors: [BrutalFisting]
+description: Beast core for Beast servers!
+api-version: 1.13
+#commands:
+
+#  potstack:
+#    aliases:
+#      - stackpot
+#      - stackpots
+#
+#  itemfilter:
+#    description: filter item pickup
+#    aliases:
+#      - filteritems
+#      - itemfilters
+#      - filter
+#
+#
+#  tickcounter:
+#    description: count ticks
+#    aliases: [tickc, countertick]
+#
+#  cropconvert:
+#    description: convert hoppers to crophoppers
+#    aliases: [converthopper, cropconv, crophopperconvert]
+#
+#  withdraw:
+#      description: withdraw money
+#      aliases: [moneywithdraw, bottlemoney, papermoney, banknote]
+#
+#  printer:
+#    description: printer mode command
+#    aliases: [print,schem]
+#
+#  disenchant:
+#    description: disenchant command
+#    aliases: [disench,removeenchants]
+#
+#  enchant:
+#    description: enchant command
+#    aliases: [ench]
+#
+#  expwithdraw:
+#    description: withdraw experience in bottles
+#    aliases: [xpbottle,bottlexp,xpbottle]
+#
+#  fpsboost:
+#    description: boost fps
+#    aliases: [boostfps,boost,fps,fpstoggle,toggle,settings]
+#
+#  tntunfill:
+#    description: tntunfill
+#    aliases: [unfilltnt]
+#
+#  tntfill:
+#    description: tntfill
+#    aliases: [filltnt]
+#
+#  voidchest:
+#    description: void chests
+#    aliases: [voidc,vc]
+#
+#  mobhoppers:
+#    description: mob crop drops
+#    aliases: [mobhopper,mh]
+#
+#  crophoppers:
+#    description: crop drops
+#    aliases: [croph,ch]
+#
+#  chunkbust:
+#    description: bust chunks
+#    aliases: [buster,boomchunk]
+#
+#  jellylegs:
+#    description: disable fall damage
+#    aliases: [nofall,antifall]
+#
+#  creeper:
+#    description: spawns a creeper in your position
+#    aliases: [creep, boom]
+#
+#  btf:
+#
+#  smelt:
+#    description: Smelts ores in your hand!
+#    aliases: [fundir, ore]
+#
+#  ct:
+#    aliases: [combat, combattag]
+#
+#  wilderness:
+#    aliases: [wild, wilder]
+#
+#  Grace:
+#    aliases: [sotw]
+#
+#  Drops:
+#    aliases: [editdrops,dropedit,loots]
+#
+#  Hopperfilter:
+#    aliases: [filter]
+#
+#  Antiitemcraft:
+#    aliases: [norecipes,recipefilter]
+#
+#  Pot:
+#    aliases: [pot]
+#
+#  F-alerts:
+#    aliases: [factionalerts,falerts,alerts,alert]
+#
+#  setvoidspawn:
+#
+#  Lightningtools:
+#    aliases: [lt,lw,lighningwands]
+#
+#  Killmerged:
+#    aliases: [kmerged,mergekill]

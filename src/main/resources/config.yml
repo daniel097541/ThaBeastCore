@@ -1,0 +1,356 @@
+###########################################################
+
+######################################################################################################################
+######################################################################################################################
+#
+#       ##########    ############    ###########
+#       #         #        #          #
+#       #########          #          ######        BY: BRUTALFISTING
+#       #        #         #          #
+#       #         #        #          #
+#       ##########         #          #
+#
+######################################################################################################################
+######################################################################################################################
+
+
+
+############# PROTECT YOUR SERVER AND HIDE YOUR PLUGINS ###################
+#
+# ALSO CAN BE USED AS COMMAND BLOCKER
+#
+###########################################################################
+Server-Protector:
+
+  enabled: true
+  bypass-permission: 'btf.cmdblock.bypass'
+  block-syntaxis: true   #PREVENTS PLAYERS FROM USING /PLUGIN:COMMAND
+  message: '&4(!) &cYou can´t do that!'
+  Blocked-Commands:
+    - '/?'
+    - '/¿'
+    - '/pl '
+    - '/plugins '
+    - '/version '
+    - '/v '
+    - '/bukkit '
+    - '/a '
+    - '/about '
+    - '/icanhasbukkit '
+    - '/ver '
+    - '/plugman list '
+    - '/command_without_slash '
+    - 'command_without_slash '
+    - '/worldedit '
+    - '//'
+    - '/help'
+
+
+############## ENDERPEARL COOLDOWN ###########################
+EnderPearl-BeastCooldown:
+    enabled: true
+    beastCooldown: 20
+    on-beastCooldown-message: '&7You must wait &d&l{beastCooldown} &7seconds until you can use another &epearl&7!'
+    bypass-permission: 'btf.pearlcd.bypass'
+    beastCooldown-ended: '&7Now you can throw another &dEnderPearl &7!'
+    excluded-worlds:
+      - 'EXCLUDED_WORLD_NAME'
+      - 'EXCLUDED_WORLD_NAME_2'
+
+
+############ GAPPLE COOLDOWN ######################
+Gapple-BeastCooldown:
+    enabled: true
+    beastCooldown: 300
+    beastCooldown-message: '&eYou must wait &6&l{beastCooldown} &euntil you can eat another &6&lGapple&e!'
+    gapple-consumed: '&eYou ate a &6&lGapple &enow the &6&lcooldown&e starts!'
+    bypass-permission: 'btf.gapplecd.bypass'
+    beastCooldown-ended: '&eYou may eat another &6Gapple&e!'
+    excluded-worlds:
+      - 'EXCLUDED_WORLD_NAME'
+      - 'EXCLUDED_WORLD_NAME_2'
+
+
+############ SMALL GOLDEN APPLE COOLDOWN ######################
+Normal-Gapple-BeastCooldown:
+    enabled: true
+    beastCooldown: 300
+    beastCooldown-message: '&eYou must wait &6&l{beastCooldown} &euntil you can eat another &6&lGapple&e!'
+    gapple-consumed: '&eYou ate a &6&lGapple &enow the &6&lcooldown&e starts!'
+    bypass-permission: 'btf.ngapplecd.bypass'
+    beastCooldown-ended: '&eYou may eat another &6Gapple&e!'
+    excluded-worlds:
+      - 'EXCLUDED_WORLD_NAME'
+      - 'EXCLUDED_WORLD_NAME_2'
+
+
+################## PREVENTS PLAYERS MINING SPAWNERS WHEN THERE ARE NEARBY ENEMIES #####################
+Anti-Spawner-Mine:
+    enabled: true
+    radius: 200.0
+    message: '&cYou can´t break spawners if there is an enemy in a &e{radius} &cradius!'
+    undetectable-permission: 'btf.spawners.undetectable'
+    bypass-permission: 'btf.spawners.bypass'
+
+
+############ MAKE SPAWNERS DRAIN WATER IN A CONFIGURABLE RADIUS ###############
+Anti-Spawner-Guard:
+    enabled: true
+    radius: 1
+
+
+
+
+######################################################################################################################
+######################################################################################################################
+
+Commands:
+
+  Jelly-Legs:
+    enabled: true
+    disabled-message: '&c(!)&4JellyLegs is disabled!'
+    permission: 'bfc.jellylegs'
+    no-permission-msg: '&cYou dont have permission to use jellylegs command!'
+    enabled-message: '&aYou turned on jellyLegs!'
+    disabled-message: '&cYou turned off jellylegs!'
+
+ ########### MAIN BTF COMMAND ################
+  BtfCommand:
+    enabled: true
+    title: '&e&n---------------&6< &dBEAST FACTIONS CORE &6>&e&n---------------'
+    permission: 'btf.command'
+    no-permission-msg: '&c(!) &4You dont have permission to use btf command!'
+    Formats:
+      - '&a - &d  /btf reloadConfigs &7Reloads the plugins config!'
+      - '&a - &d  /ct &7Combat tag main command!'
+      - '&a - &d  /hopperfilter &7Filter items in hoppers with a gui!'
+      - '&a - &d  /wilderness &7Teleports you to a random location!'
+      - '&a - &d  /smelt &7Smelts ores in your hand!'
+      - '&a - &d  /creeper &7Spawns a creeper at your location!'
+      - '&a - &d  /drops &7Edit mob drops with a gui!'
+      - '&a - &d  /grace &7Check how much time lefts to the grace period at the SOTW!'
+      - '&a - &d  /grace enable &7Enables the grace period!'
+      - '&a - &d  /grace disable &7Ends the grace period!'
+      - '&a - &d  /antiitemcraft &7Filter wich items can be crafted with a gui!'
+
+ ########### SPAWNS A CREEPER IN YOUR LOCATION ################
+  Creeper:
+    permission: 'btf.creeper'
+    message: '&aYou spawned a creeper!'
+    no-permission-msg: '&cYou don´t have permission!'
+    creeper-custom-name: '&6&l {player} &eCreeper´s'
+    cooldown-message: '&cYou can´t use this command until beastCooldown ends!  {beastCooldown} '
+    cooldown: 120
+    cooldown-ended: '&eNow you may use &a/Creeper &e again!'
+
+############## SMELTS ORES IN YOUR HAND #######################
+  Smelt:
+    permission: 'btf.smelt'
+    message: '&aYou smelt the ores in your hand!'
+    not-an-ore: '&cThats not an ore!'
+    no-permission-msg: '&cYou don´t have permission!'
+
+####################### RELOADS THE PLUGIN #####################
+  Reload:
+    permission: 'btf.reloadConfigs'
+    message: '&aPlugin reloaded!'
+
+
+
+###########################################################
+
+######################################################################################################################
+######################################################################################################################
+#
+#       ##########    ############    ###########
+#       #         #        #          #
+#       #########          #          ######
+#       #        #         #          #
+#       #         #        #          #
+#       ##########         #          #
+#
+######################################################################################################################
+######################################################################################################################
+
+
+############ PREVENTS WITHERS FROM SPAWNING #################
+
+Anti-Wither:
+  enabled: true
+
+############# PREVENTS PLAYERS FROM GLITCHING BASES BY BUILDING OUTSIDE THE WORLDBORDER WITH SCHEMATICA ################
+Anti-Schem-Bug:
+    enabled: true
+    message: '&cYou can´t build outside the world border!'
+
+
+########## DISABLES REGEN WALLS ####################
+Explode-Lava:
+    enabled: true
+
+
+############## SPONGES CLEAR LAVA ####################
+Lava-Sponge:
+    enabled: true
+    radius: 3
+
+############## SPONGES CLEAR LAVA ####################
+Water-Sponge:
+    enabled: true
+    radius: 3
+
+################## DISABLES WEATHER CHANGING #################
+Anti-Weather:
+    enabled: true
+
+
+############## PREVENTS WATER FROM BREAKING REDSTONE ITEMS ####################
+Anti-Water-Redstone:
+    enabled: true
+
+
+######### ALLOWS SAND STACKING OVER CHESTS, TRAPPEDCHESTS, ENDERCHESTS ETC ############
+Sand-Stacking-Fix:
+    enabled: true
+    blocks:
+      - 'ENCHANTMENT_TABLE'
+      - 'SOUL_SAND'
+      - 'BED'
+      - 'CHEST'
+      - 'TRAPPED_CHEST'
+      - 'BREWING_STAND'
+
+############ TELEPORTS PLAYERS TO THE WORLDS SPAWN WHILE THEY LOG OUT IN AN ENEMY FACTION #############
+Faction-Logout:
+    enabled: true
+    bypass-permission: 'btf.enemy.logout'
+
+############ HIDES QUIT MESSAGES FROM CHAT ############
+Hide-Stream:
+    enabled: true
+
+
+############## FIXES GLITCHES MAKING PLAYERS GLITCHING INTO FACTIONS ###############
+Pearl-Glitch-Fix:
+    enabled: true
+    message: '&cYou can´t throw an enderpearl there!'
+
+############### PREVENTS PLAYERS FROM THROWING ENDERPEARLS OUTSIDE THE BORDER #############
+Deny-Enderpearl-Outside-Border:
+    enabled: true
+    message: '&cYou can´t throw enderpearls outside the border!'
+    bypass-permission: 'btf.border.pearl'
+
+
+############# PREVENTS ITEM FROM BEEING BURNED ################3
+Anti-Item-burn:
+    enabled: true
+
+############## IRONGOLEMS AUTOMATICALLY DIE WHILE BURNING ####################
+Irongolem-Fast-Death:
+    enabled: true
+    damage: 200
+
+############ PREVENTS PLAYERS FROM RIDING HORSES ################
+Anti-Horse-Mount:
+    enabled: true
+    message: '&cYou can´t ride horses!'
+    bypass-permission: 'btf.mount.bypass'
+
+########### PREVENTS PLAYERS FROM TELEPORTING O ENEMY FACTIONS ##################3
+No-Enemy-Teleport:
+    enabled: true
+    message: '&cYou can´t teleport to enemy land!'
+    bypass-permission: 'btf.enemytp.bypass'
+
+########## AUTOMATICALLY KILLS CREEPERS WHILE THEY SPAWN INTO A WALL ################3
+Anti-Creeper-Glitch:
+    enabled: true
+
+####### PREVENTS FROM PLACING BOATS ##############3
+Anti-Boat-Place:
+    enabled: true
+    message: '&cBoats are disabled!'
+    bypass-permission: 'btf.boatplace.bypass'
+
+########## RECYCLES THE BOTTLES IN INVENTORY WHILE DRINKING POTIONS ########################
+Bottle-Recycling:
+    enabled: true
+    send-message: true
+    message: '&d&lPotions &7>&8> The bottle of the potion has been recycled!'
+    permission: 'btf.recycle'
+
+
+######## PREVENTS ITEMS FROM BEEING DROPPED (CAUTION THEY WILL BE REMOVED) ########
+Deny-Item-Spawn:
+    enabled: true
+    items: [38]
+
+
+
+############# PREVENT FROM PISTONS PUSHING PILLARS OF SAND HIGHER THAN THE MAX-HIGH VALUE ############
+Auto-Cannons-Limiter:
+  enabled: true
+  max-high: 20
+
+
+################ DISABLES ALL EXPLOSIONS ###########################
+No-Explosions:
+  enabled: false
+  grace-period:
+
+
+########## REMOVES FALLING BLOCKS IN WORLDBORDER ##########
+Prevent-Sand-Stacking-In-Worldborder:
+  enabled: true
+
+########## ANTI VOID FALLING TELEPORTS PLAYERS TO THE SPAWN WHEN THEY STUCK IN THE VOID ###############
+Anti-Void-Falling:
+  enabled: true
+  command-permission: 'btf.antivoidspawn.command'
+  message: '&aAnti void spawn successfully set!'
+  no-permission: '&4(!) &cYou dont have permission to do this!'
+  spawn:
+    world: 'world'
+    x: '0'
+    y: '100'
+    z: '0'
+  denied-worlds:
+    - 'DENIED_WORLD_NAME'
+
+
+######### NO TNT DAMAGE --> PLAYERS WITH PERMISSION WONT RECIEVE EXPLOSIONS DAMAGE ##############
+No-Explosions-Damage:
+  enabled: true
+  permission: 'btf.notntdamage'
+
+
+################ NO WATER CANNONS --> TNT WONT BREAK BLOCKS IF IT SPAWNS AND EXPLODES IN THE SAME FACTION ######
+Cannon-Protector:
+  enabled: true
+
+
+Water-Proof-Blazes:
+  enabled: true
+
+
+Iron-Golem-Spawn-On-Fire:
+  enabled: false
+
+
+No-Water-Flow-Outside-Border:
+  enabled: true
+
+
+
+No-Flying-Pearl:
+  enabled: true
+  bypass-permission: 'btf.nfp.bypass'
+  message: '&4(!) &cYou can´t throw enderpearls while flying!'
+
+No-Piston-McMMO:
+  enabled: true
+  listed-blocks:
+    - 'CACTUS'
+    - 'SUGAR_CANE_BLOCK'
+    - 'CROPS'

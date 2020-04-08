@@ -4,36 +4,29 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>info.beastsoftware</groupId>
-    <artifactId>thabeastcore</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <groupId>BeastSoftware</groupId>
+    <artifactId>BeastCore</artifactId>
+    <version>4.2.1.5-STABLE</version>
+    <packaging>jar</packaging>
+    <name>BeastCore</name>
 
-    <name>ThaBeastCore</name>
-
-    <description>Tha beast core for tha beast servers</description>
+    <description>Beast core for Beast servers!</description>
     <properties>
-        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <modules>
-        <module>config</module>
-        <module>plugin</module>
-        <module>common</module>
-        <module>features</module>
-    </modules>
 
     <build>
         <defaultGoal>clean package</defaultGoal>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -47,7 +40,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <minimizeJar>true</minimizeJar>
                         </configuration>
                     </execution>
                 </executions>
@@ -63,32 +56,212 @@
 
     <repositories>
         <repository>
-            <id>papermc-repo</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <id>factionsrepo</id>
+            <url>http://ci.ender.zone/plugin/repository/everything/</url>
+        </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>sk89q-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+
+        <repository>
+            <id>illyria</id>
+            <url>https://nexus.illyria.io/repository/maven-public/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
+
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldguard</artifactId>
+            <version>6.0.0-beta-01</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.10</version>
             <scope>provided</scope>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.github.tr7zw</groupId>
+            <artifactId>Item-NBT-API</artifactId>
+            <version>master-d73e5829f3-1</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>4.1.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.14.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>bf</groupId>
+            <artifactId>BeastFactions</artifactId>
+            <version>1.0</version>
+            <systemPath>${project.basedir}/dependencies/BeastFactions.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>silk</groupId>
+            <artifactId>silkspawners</artifactId>
+            <version>1.0</version>
+            <systemPath>${project.basedir}/dependencies/SilkSpawners.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.massivecraft</groupId>
+            <artifactId>SavageFactions</artifactId>
+            <version>1.6.9.5-U0.2.1-RC-1.6.2-RC-2.5-RC-6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>mcraft</groupId>
+            <artifactId>massivecraftfactions</artifactId>
+            <systemPath>${project.basedir}/dependencies/Factions.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>mcraft</groupId>
+            <artifactId>Massivecraftcore</artifactId>
+            <systemPath>${project.basedir}/dependencies/MassiveCore.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>ess</groupId>
+            <artifactId>essentials</artifactId>
+            <systemPath>${project.basedir}/dependencies/EssentialsX-2.15.0.1.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>hd</groupId>
+            <artifactId>holographicdisplays</artifactId>
+            <systemPath>${project.basedir}/dependencies/HolographicDisplays.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>lf</groupId>
+            <artifactId>legacyfactions</artifactId>
+            <systemPath>${project.basedir}/dependencies/LegacyFactions.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>papi</groupId>
+            <artifactId>PlaceholderAPI</artifactId>
+            <systemPath>${project.basedir}/dependencies/PlaceholderAPI-2.9.2.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>pl</groupId>
+            <artifactId>protocolLib</artifactId>
+            <systemPath>${project.basedir}/dependencies/ProtocolLib.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>sgp</groupId>
+            <artifactId>ShopGUIPlus</artifactId>
+            <systemPath>${project.basedir}/dependencies/ShopGUIPlus-1.18.0-SNAPSHOT.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>Vault</groupId>
+            <artifactId>Vault</artifactId>
+            <systemPath>${project.basedir}/dependencies/Vault-1.6.7.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>wildstacker</groupId>
+            <artifactId>WildStacker</artifactId>
+            <systemPath>${project.basedir}/dependencies/WildStackerAPI-b13.jar</systemPath>
+            <version>1.0</version>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>core</artifactId>
+            <version>3.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.1.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>info.beastsoftware</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.massivecraft</groupId>-->
+<!--            <artifactId>Factions</artifactId>-->
+<!--        </dependency>-->
+
     </dependencies>
 </project>
