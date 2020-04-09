@@ -47,7 +47,13 @@ public class CropHoppersDataManager {
 
     public CropHopper getFromConfig(String id){
         String worldName = dataConfig.getConfig().getString(PATH + "." + id + ".world");
+
+        if (worldName == null) {
+            return null;
+        }
+
         World world = Bukkit.getWorld(worldName);
+
         if (world == null) {
             return null;
         }
