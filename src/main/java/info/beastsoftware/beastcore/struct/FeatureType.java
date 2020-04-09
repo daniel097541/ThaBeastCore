@@ -3,6 +3,8 @@ package info.beastsoftware.beastcore.struct;
 public enum FeatureType {
 
 
+    THROWABLE_CEGGS("enabled"),
+
     NO_BABY_ZOMBIES("enabled"),
 
     NO_ENEMY_HOMES("enabled"),

@@ -1,5 +1,6 @@
 package info.beastsoftware.beastcore.event;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -14,4 +15,9 @@ public abstract class VoidEvent extends Event {
     public HandlerList getHandlers() {
         return handlers;
     }
+
+    protected void autoCall(){
+        Bukkit.getPluginManager().callEvent(this);
+    }
+
 }

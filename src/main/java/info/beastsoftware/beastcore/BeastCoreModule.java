@@ -120,6 +120,7 @@ public class BeastCoreModule extends AbstractModule {
         this.bind(IConfig.class).annotatedWith(NoEnemyHomes.class).toInstance(new BeastConfig("No-Enemy-Homes.yml", new NoEnemyHomesPathColl(), plugin));
         this.bind(IConfig.class).annotatedWith(CropHoppersData.class).toInstance(new BeastConfig("Crop-Hoppers-Data.yml", new CropHoppersDataPathColl(), plugin));
         this.bind(IConfig.class).annotatedWith(NoBabyZombies.class).toInstance(new BeastConfig("No-Baby-Zombies.yml", new NoBabyZombiesPathColl(), plugin));
+        this.bind(IConfig.class).annotatedWith(ThrowableCegss.class).toInstance(new BeastConfig("Throwable-Ceggs.yml", new ThrowableCeggsPathColl(), plugin));
 
         /// FEATURE BINDINGAntiItemCraft
         this.bind(IBeastFeature.class).annotatedWith(NoExplosionsDamage.class).to(AntiExplosionDamageFeature.class);
@@ -197,6 +198,7 @@ public class BeastCoreModule extends AbstractModule {
         this.bind(IBeastFeature.class).annotatedWith(NoEnemyTeleport.class).to(NoEnemyTeleportFeature.class);
         this.bind(IBeastFeature.class).annotatedWith(NoEnemyHomes.class).to(NoEnemyHomesFeature.class);
         this.bind(IBeastFeature.class).annotatedWith(NoBabyZombies.class).to(NoBabyZombiesFeature.class);
+        this.bind(IBeastFeature.class).annotatedWith(ThrowableCegss.class).to(ThrowableCeggsFeature.class);
 
         /// FEATURE MANAGER
         this.bind(IFeatureManager.class).to(FeatureManager.class);

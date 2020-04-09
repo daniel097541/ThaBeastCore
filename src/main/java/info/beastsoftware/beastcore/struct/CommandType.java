@@ -1,7 +1,7 @@
 package info.beastsoftware.beastcore.struct;
 
 public enum CommandType {
-
+    THROWABLE_EGGS("throwableggs", "enabled", "command.permission", "command.no-permission-message", null),
     NV("nv", "enabled", "permission", "no-permission-message", null),
     DEBUFF("debuff", "enabled", "permission", "no-permission-message", null),
     TOGGLE_DEATHSCREEN("autospawn", "enabled", "Command.permission", "Command.no-permission-message", null),

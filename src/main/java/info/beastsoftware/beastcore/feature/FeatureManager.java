@@ -344,6 +344,10 @@ public class FeatureManager implements IFeatureManager {
     @NoBabyZombies
     private IBeastFeature noBabyZombies;
 
+    @Inject
+    @ThrowableCegss
+    private IBeastFeature throwableCeggs;
+
     public FeatureManager() {
         Bukkit.getConsoleSender().sendMessage(StrUtils.translate("&dBeastCore &7>> &eFeature manager initialized!"));
     }
