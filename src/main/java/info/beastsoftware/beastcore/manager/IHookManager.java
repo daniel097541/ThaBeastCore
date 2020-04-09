@@ -19,8 +19,6 @@ public interface IHookManager {
 
     IEconomyHook getEconomyHook();
 
-    INBTHook getNBTHook();
-
     boolean isWorldGuardHooked();
 
     IWorldGuardHook getWorldGuardHook();

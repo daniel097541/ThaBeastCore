@@ -15,7 +15,6 @@ public class HookManager implements IHookManager {
     private final BeastCore plugin;
     private IProtocolLibHook protocolLibHook;
     private IEconomyHook economyHook;
-    private INBTHook NBTHook;
     private IWorldGuardHook worldGuardHook;
     private IEssentialsHook essentialsHook;
     private final FactionsService factionsService;
@@ -60,7 +59,6 @@ public class HookManager implements IHookManager {
     public void init() {
         this.setUpProtocolManager();
         this.economyHook = new EconomyHook(this.plugin);
-        this.NBTHook = new NBTHook();
         this.setUpWorldGuard();
         this.setUpEssentialsHook();
     }

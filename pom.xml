@@ -6,7 +6,7 @@
 
     <groupId>BeastSoftware</groupId>
     <artifactId>BeastCore</artifactId>
-    <version>4.2.1.5-STABLE</version>
+    <version>4.3.0.1-STABLE</version>
     <packaging>jar</packaging>
     <name>BeastCore</name>
 
@@ -110,13 +110,6 @@
             <artifactId>lombok</artifactId>
             <version>1.18.10</version>
             <scope>provided</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.github.tr7zw</groupId>
-            <artifactId>Item-NBT-API</artifactId>
-            <version>master-d73e5829f3-1</version>
         </dependency>
 
         <dependency>

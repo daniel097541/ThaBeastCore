@@ -2,7 +2,6 @@ package info.beastsoftware.beastcore;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import de.tr7zw.nbtinjector.NBTInjector;
 import info.beastsoftware.beastcore.api.IBeastCoreAPI;
 import info.beastsoftware.beastcore.beastutils.utils.StrUtils;
 import info.beastsoftware.beastcore.feature.IFeatureManager;
@@ -50,12 +49,6 @@ public final class BeastCore extends JavaPlugin {
         this.beastCoreModule = new BeastCoreModule(this);
         Injector injector = beastCoreModule.createInjector();
         injector.injectMembers(this);
-        try {
-            NBTInjector.inject();
-        }
-        catch (Exception e){
-            getLogger().info("Could not load NBT support!");
-        }
     }
 
 

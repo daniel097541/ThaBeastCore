@@ -5,6 +5,7 @@ import info.beastsoftware.beastcore.beastutils.config.IConfig;
 import info.beastsoftware.beastcore.beastutils.utils.IPlayerUtil;
 import info.beastsoftware.beastcore.feature.AbstractFeatureListener;
 import info.beastsoftware.beastcore.struct.FeatureType;
+import info.beastsoftware.hookcore.entity.BeastPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -40,6 +41,14 @@ public class ExpWithdrawFeatureListener extends AbstractFeatureListener {
         e.setCancelled(true);
 
         Player player = e.getPlayer();
+        BeastPlayer beastPlayer = this.getPlayer(e.getPlayer());
+
+        //do not allow money withdraw in printer mode
+        if(this.getApi().isOnPrinterMode(beastPlayer)){
+            beastPlayer.sms("&cYou cannot do that while in printer mode!");
+            return;
+        }
+
 
         //disabled feature
         if (!isOn()) {

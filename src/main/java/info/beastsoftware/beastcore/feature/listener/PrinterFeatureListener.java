@@ -7,7 +7,6 @@ import info.beastsoftware.beastcore.event.PrinterToggleEvent;
 import info.beastsoftware.beastcore.event.ShowMoneySpentInPrinterEvent;
 import info.beastsoftware.beastcore.feature.AbstractFeatureListener;
 import info.beastsoftware.beastcore.manager.IEconomyHook;
-import info.beastsoftware.beastcore.manager.NBTManager;
 import info.beastsoftware.beastcore.printer.IPrinterManager;
 import info.beastsoftware.beastcore.struct.FeatureType;
 import info.beastsoftware.beastcore.util.EconomyUtil;
@@ -16,7 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +23,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -36,15 +33,12 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class PrinterFeatureListener extends AbstractFeatureListener {
 
     private final IPrinterManager printerManager;
-    private final NBTManager nbtManager = new NBTManager() {
-    };
 
     public PrinterFeatureListener(IConfig config, IEconomyHook economyHook, IPrinterManager printerManager) {
         super(config, FeatureType.PRINTER);
@@ -157,15 +151,14 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
 
         ItemStack itemStack = e.getItemDrop().getItemStack();
 
-        if(itemStack.hasItemMeta()){
+        if (itemStack.hasItemMeta()) {
             e.getItemDrop().setItemStack(null);
-            for(int slot = 0; slot < player.getInventory().getSize(); slot++){
+            for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
                 ItemStack inSlot = player.getInventory().getItem(slot);
-                if(Objects.nonNull(inSlot)){
-                    if(economyUtil.getPriceBuyShopGuiPlus(itemStack, player.getBukkitPlayer()) <= 0.0){
+                if (Objects.nonNull(inSlot)) {
+                    if (economyUtil.getPriceBuyShopGuiPlus(itemStack, player.getBukkitPlayer()) <= 0.0) {
                         player.getInventory().setItem(slot, null);
-                    }
-                    else{
+                    } else {
                         player.getInventory().setItem(slot, new ItemStack(itemStack.getType(), itemStack.getAmount()));
                     }
                 }
@@ -254,16 +247,6 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
         ItemStack itemStack = new ItemStack(material);
 
 
-        //remove nbt metadata always
-        BlockState blockState = block.getState();
-
-        if (this.removeNBT()) {
-            this.nbtManager.removeNBTMetadata(blockState);
-        }
-
-
-        double price = 0;
-
         //blacklisted blocks
         if (config.getConfig().getStringList("Settings.blacklisted-blocks").contains(material.name())) {
             player.sms(config.getConfig().getString("Settings.Messages.cant-place-that-block"));
@@ -271,22 +254,7 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
             return;
         }
 
-        //use ess
-        if (essentials) {
-            price = economyUtil.getItemPriceEssentials(itemStack);
-        }
-
-        //use sgp
-        if (shopGuiPlus) {
-            price = economyUtil.getPriceBuyShopGuiPlus(itemStack, player.getBukkitPlayer());
-        }
-
-        if (shopGuiPlus && price <= 0 && config.getConfig().getBoolean("Settings.use-default-sell-system-if-others-fail")) {
-            price = economyUtil.getItemPriceDefault(itemStack);
-        }
-
-        if (!essentials && !shopGuiPlus)
-            price = economyUtil.getItemPriceDefault(itemStack);
+        double price = this.getItemPrice(player, itemStack);
 
         if (!economyUtil.hasEnoughtMoney(player.getBukkitPlayer(), price)) {
             player.performCommand("printer off");
@@ -405,12 +373,12 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
 
         ItemStack itemStack = e.getPlayer().getItemInHand();
 
-        if(itemStack.getType().equals(Material.AIR)){
+        if (itemStack.getType().equals(Material.AIR)) {
             return;
         }
 
         //block when item has meta
-        if(itemStack.hasItemMeta()){
+        if (itemStack.hasItemMeta()) {
             e.setCancelled(true);
             player.sms(config.getConfig().getString("Settings.Messages.blocked-interaction"));
             return;
@@ -565,18 +533,12 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onClick(InventoryClickEvent event) {
-
-
         if (event.getWhoClicked() instanceof Player) {
-
             BeastPlayer player = this.getPlayer((Player) event.getWhoClicked());
-
             if (isOnPrinter(player)) {
-
                 if (Objects.nonNull(event.getCurrentItem())) {
                     event.getCurrentItem().setItemMeta(null);
                 }
-
                 if (Objects.nonNull(event.getCursor())) {
                     event.getCursor().setItemMeta(null);
                 }
@@ -594,11 +556,74 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
                     || item.getType().equals(Material.AIR)) {
                 return;
             }
-            if (item.hasItemMeta() || item.getType().equals(Material.POTION)) {
+            if (!this.isAllowedPrinterItem(item, player)) {
                 player.sms(config.getConfig().getString("Settings.Messages.blocked-interaction"));
                 player.getInventory().setItem(event.getNewSlot(), new ItemStack(Material.AIR));
             }
         }
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void checkInteract(PlayerInteractEvent event) {
+        BeastPlayer player = this.getPlayer(event.getPlayer());
+        if (this.isOnPrinter(player)) {
+            this.checkInventory(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void checkDrop(PlayerDropItemEvent event) {
+        BeastPlayer player = this.getPlayer(event.getPlayer());
+        if (isOnPrinter(player)) {
+            this.checkInventory(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void checkInventoryClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player) {
+            BeastPlayer player = this.getPlayer((Player) event.getWhoClicked());
+            if (isOnPrinter(player)) {
+                this.checkInventory(player);
+            }
+        }
+    }
+
+    private void checkInventory(BeastPlayer player) {
+        for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
+            ItemStack itemStack = player.getInventory().getItem(slot);
+            //remove all items that are not allowed
+            if (!this.isAllowedPrinterItem(itemStack, player)) {
+                player.getInventory().setItem(slot, new ItemStack(Material.AIR));
+            }
+        }
+    }
+
+    private double getItemPrice(BeastPlayer player, ItemStack itemStack) {
+        double price = 0.0;
+        //use ess
+        if (essentials) {
+            price = economyUtil.getItemPriceEssentials(itemStack);
+        }
+
+        //use sgp
+        if (shopGuiPlus) {
+            price = economyUtil.getPriceBuyShopGuiPlus(itemStack, player.getBukkitPlayer());
+        }
+
+        if (shopGuiPlus && price <= 0 && config.getConfig().getBoolean("Settings.use-default-sell-system-if-others-fail")) {
+            price = economyUtil.getItemPriceDefault(itemStack);
+        }
+
+        if (!essentials && !shopGuiPlus)
+            price = economyUtil.getItemPriceDefault(itemStack);
+
+        return price;
+    }
+
+    private boolean isAllowedPrinterItem(ItemStack itemStack, BeastPlayer player) {
+        return Objects.nonNull(itemStack) && this.getItemPrice(player, itemStack) > 0.0 && !itemStack.hasItemMeta() && !itemStack.getType().equals(Material.POTION);
     }
 
 }

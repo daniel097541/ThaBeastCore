@@ -74,6 +74,14 @@ public class MoneyWithdrawFeatureListener extends AbstractFeatureListener {
 
         e.setCancelled(true);
 
+        BeastPlayer player = this.getPlayer(e.getPlayer());
+
+        //do not allow money withdraw in printer mode
+        if(this.getApi().isOnPrinterMode(getPlayer(e.getPlayer()))){
+            player.sms("&cYou cannot do that while in printer mode!");
+            return;
+        }
+
         if (e.getPlayer().getItemInHand().getAmount() == 1)
             e.getPlayer().setItemInHand(null);
         else
