@@ -3,6 +3,7 @@ package info.beastsoftware.beastcore.struct;
 public enum FeatureType {
 
 
+    NO_BABY_ZOMBIES("enabled"),
 
     NO_ENEMY_HOMES("enabled"),
 
