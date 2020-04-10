@@ -30,3 +30,5 @@ target
 /gradlew
 /gradlew.bat
 /.idea/
+/.idea/
+/target/

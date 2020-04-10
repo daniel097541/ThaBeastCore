@@ -6,11 +6,13 @@ import info.beastsoftware.beastcore.event.ThrowableEggsGiveEvent;
 import info.beastsoftware.beastcore.feature.AbstractFeatureListener;
 import info.beastsoftware.beastcore.struct.FeatureType;
 import info.beastsoftware.hookcore.entity.BeastPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -94,7 +96,11 @@ public class ThrowableCeggsFeatureListener extends AbstractFeatureListener {
                         getServer().getScheduler().scheduleSyncDelayedTask(BeastCore.getInstance(), () -> {
                             try {
                                 Location location = grenade.getLocation();
-                                location.getWorld().createExplosion(location, this.getExplosionSize());
+                                Creeper creeper = (Creeper) location.getWorld().spawnEntity(location, EntityType.CREEPER);
+                                Bukkit.getScheduler().runTaskLater(BeastCore.getInstance(), () -> {
+                                    location.getWorld().createExplosion(location, this.getExplosionSize());
+                                    creeper.remove();
+                                }, 20L);
                                 grenade.remove();
                             } catch (Exception ev) {
                                 ev.printStackTrace();
@@ -107,7 +113,11 @@ public class ThrowableCeggsFeatureListener extends AbstractFeatureListener {
                         getServer().getScheduler().scheduleSyncDelayedTask(BeastCore.getInstance(), () -> {
                             try {
                                 Location location = grenade.getLocation();
-                                location.getWorld().createExplosion(location, this.getExplosionSize());
+                                Creeper creeper = (Creeper) location.getWorld().spawnEntity(location, EntityType.CREEPER);
+                                Bukkit.getScheduler().runTaskLater(BeastCore.getInstance(), () -> {
+                                    location.getWorld().createExplosion(location, this.getExplosionSize());
+                                    creeper.remove();
+                                }, 20L);
                                 grenade.remove();
                             } catch (Exception ev) {
                                 ev.printStackTrace();
