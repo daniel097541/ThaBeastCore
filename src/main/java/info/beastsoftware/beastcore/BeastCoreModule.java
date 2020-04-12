@@ -121,6 +121,7 @@ public class BeastCoreModule extends AbstractModule {
         this.bind(IConfig.class).annotatedWith(CropHoppersData.class).toInstance(new BeastConfig("Crop-Hoppers-Data.yml", new CropHoppersDataPathColl(), plugin));
         this.bind(IConfig.class).annotatedWith(NoBabyZombies.class).toInstance(new BeastConfig("No-Baby-Zombies.yml", new NoBabyZombiesPathColl(), plugin));
         this.bind(IConfig.class).annotatedWith(ThrowableCegss.class).toInstance(new BeastConfig("Throwable-Ceggs.yml", new ThrowableCeggsPathColl(), plugin));
+        this.bind(IConfig.class).annotatedWith(MobHoppersData.class).toInstance(new BeastConfig("Mob-Hoppers-Data.yml", new MobHoppersDataPathColl(), plugin));
 
         /// FEATURE BINDINGAntiItemCraft
         this.bind(IBeastFeature.class).annotatedWith(NoExplosionsDamage.class).to(AntiExplosionDamageFeature.class);

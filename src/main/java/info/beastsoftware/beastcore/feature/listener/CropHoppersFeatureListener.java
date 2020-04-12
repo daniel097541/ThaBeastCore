@@ -183,8 +183,6 @@ public class CropHoppersFeatureListener extends AbstractFeatureListener {
     public void onItemSpawn(ItemSpawnEvent e) {
         try {
 
-            long start = System.currentTimeMillis();
-
             if (!isOn() || e.isCancelled()) return;
 
             if (!CropHoppersGui.getInstance().isItemContained(e.getEntity().getItemStack()))

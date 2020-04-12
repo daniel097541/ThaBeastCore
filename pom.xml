@@ -91,6 +91,14 @@
 
     <dependencies>
 
+
+        <dependency>
+            <groupId>com.github.theminecoder</groupId>
+            <artifactId>NMSProxy</artifactId>
+            <version>0.3</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>

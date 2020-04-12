@@ -13,20 +13,14 @@ public class MobHoppersDataConfig extends BeastDataConfig {
 
         for (Mob mob : Mob.values()) {
             if (mob.getEntityType() == null) continue;
-            loadConfig(mob.getEntityType().toString());
+            loadWithoutCreating(mob.getEntityType().toString());
         }
 
-        loadConfig("ALL");
+        loadWithoutCreating("ALL");
     }
 
     @Override
     public void createConfig(File file, YamlConfiguration config) {
-        config.createSection("Locations");
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }

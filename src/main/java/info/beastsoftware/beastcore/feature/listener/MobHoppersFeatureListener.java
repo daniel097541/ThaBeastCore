@@ -4,46 +4,50 @@ import info.beastsoftware.beastcore.BeastCore;
 import info.beastsoftware.beastcore.beastutils.config.IConfig;
 import info.beastsoftware.beastcore.beastutils.config.IDataConfig;
 import info.beastsoftware.beastcore.beastutils.utils.IInventoryUtil;
-import info.beastsoftware.beastcore.beastutils.utils.ILocationUtil;
+import info.beastsoftware.beastcore.entity.MobHopper;
 import info.beastsoftware.beastcore.feature.AbstractFeatureListener;
+import info.beastsoftware.beastcore.manager.MobHoppersService;
 import info.beastsoftware.beastcore.struct.FeatureType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Hopper;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class MobHoppersFeatureListener extends AbstractFeatureListener {
 
 
-    public MobHoppersFeatureListener(IConfig config, IDataConfig dataConfig) {
-        super(config, dataConfig, FeatureType.MOB_HOPPERS);
+    private final MobHoppersService service;
+    private final IDataConfig old;
+
+
+    public MobHoppersFeatureListener(IConfig config, IConfig dataConfig, IDataConfig old) {
+        super(config, FeatureType.MOB_HOPPERS);
+        this.service = new MobHoppersService(dataConfig);
+        this.old = old;
         this.loadLocations();
     }
 
-    private final HashMap<String, HashMap<Integer, Location>> mobHoppersLocations = new HashMap<>();
+    private void addMobHopper(Location location, String type) {
+        this.service.add(location, type);
+    }
 
 
     private void loadLocations() {
 
-        for (String mob : this.dataConfig.getConfigs().keySet()) {
+        for (String mob : this.old.getConfigs().keySet()) {
 
-            YamlConfiguration configuration = this.dataConfig.getConfigByName(mob);
-
-            if (!mobHoppersLocations.containsKey(mob)) {
-                HashMap<Integer, Location> hashMap = new HashMap<>();
-                mobHoppersLocations.put(mob, hashMap);
-            }
+            YamlConfiguration configuration = this.old.getConfigByName(mob);
 
             for (String idString : configuration.getConfigurationSection("Locations").getKeys(false)) {
 
@@ -60,90 +64,11 @@ public class MobHoppersFeatureListener extends AbstractFeatureListener {
 
                 Location location = new Location(world, x, y, z);
 
-                mobHoppersLocations.get(mob).put(Integer.parseInt(idString), location);
+                this.service.add(location, mob);
             }
+
+            this.old.delete(mob);
         }
-    }
-
-    private boolean isMobHopperLocation(Location location) {
-
-        for (String mob : mobHoppersLocations.keySet()) {
-            if (mobHoppersLocations.get(mob).containsValue(location)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    private String getMobHopperType(Location location) {
-
-        for (String mob : mobHoppersLocations.keySet()) {
-            if (mobHoppersLocations.get(mob).containsValue(location)) {
-                return mob;
-            }
-        }
-
-        return "nope";
-    }
-
-
-    private int getMobHopperId(Location location, String type) {
-        for (int id : mobHoppersLocations.get(type).keySet()) {
-            if (mobHoppersLocations.get(type).get(id).equals(location))
-                return id;
-        }
-
-        return -1;
-    }
-
-
-    private void addMobHopper(Location location, String type) {
-
-        int id = 0;
-
-        if (!mobHoppersLocations.containsKey(type))
-            mobHoppersLocations.put(type, new HashMap<>());
-
-        if (!mobHoppersLocations.get(type).isEmpty())
-            id = getLastId(type) + 1;
-
-        mobHoppersLocations.get(type).put(id, location);
-
-        this.dataConfig.loadConfig(type);
-        this.dataConfig.getConfigByName(type).set("Locations." + id + ".world", location.getWorld().getName());
-        this.dataConfig.getConfigByName(type).set("Locations." + id + ".x", location.getX());
-        this.dataConfig.getConfigByName(type).set("Locations." + id + ".y", location.getY());
-        this.dataConfig.getConfigByName(type).set("Locations." + id + ".z", location.getZ());
-        this.dataConfig.save(type);
-
-    }
-
-    private void removeMobHopper(Location location) {
-        String type = getMobHopperType(location);
-
-        int id = getMobHopperId(location, type);
-
-        if (id == -1) return;
-
-        mobHoppersLocations.get(type).remove(id);
-
-        this.dataConfig.getConfigByName(type).set("Locations." + id, null);
-        this.dataConfig.save(type);
-    }
-
-
-    private int getLastId(String type) {
-        int id = 0;
-
-        for (int newId : mobHoppersLocations.get(type).keySet()) {
-            if (newId > id) {
-                id = newId;
-            }
-        }
-
-        return id;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -156,54 +81,48 @@ public class MobHoppersFeatureListener extends AbstractFeatureListener {
 
         int radius = config.getConfig().getInt("Mob-Hoppers.Settings.collect-radius-in-chunks");
 
-        for (Chunk chunk : ILocationUtil.getChunksAroundLocation(e.getEntity().getEyeLocation(), radius)) {
-            //iterate over all the tile entities in the chunk
-            for (BlockState tile : chunk.getTileEntities()) {
+        Entity entity = e.getEntity();
+        EntityType type = entity.getType();
+        Location location = entity.getLocation();
 
-                if (!(tile instanceof Hopper)) continue;
+        //get all mobhoppers sorted by distance to the entity
+        Set<MobHopper> hoppers = this.service.getInRadiusSortedByDistance(radius, location, type);
+        List<ItemStack> dropsCopy = new ArrayList<>(e.getDrops());
 
-                Hopper hopper = (Hopper) tile;
-                //check if has metadata
-                //check if the mobhoppertype is the same
-                if (!isMobHopperLocation(hopper.getLocation()))
-                    continue;
+        //iterate over all hoppers and try to add the drops there, near hoppers have preference
+        for (MobHopper mobHopper : hoppers) {
+            Inventory inventory = mobHopper.getInventory();
 
-                List<ItemStack> drops = e.getDrops();
+            //there are still items in the drops copy
+            if (!dropsCopy.isEmpty()) {
 
-                //all mob hopper
-                if (getMobHopperType(hopper.getLocation()).equalsIgnoreCase("all")) {
+                // iterate over all drops and add them in the hopper that can handle the amount of items
+                for(Iterator<ItemStack> iterator = dropsCopy.iterator(); iterator.hasNext();){
 
-                    //add items to the hopper
-                    for (ItemStack itemStack : drops) {
-                        if (itemStack == null) continue;
-                        //no item spawn remove the not desired drops
-                        hopper.getInventory().addItem(itemStack);
+                    ItemStack drop = iterator.next();
+                    Material material = drop.getType();
+                    int amount = drop.getAmount();
+
+                    //check if the hopper allows this item to be added
+                    boolean canAddDrop = IInventoryUtil.canAddItem(material, amount, inventory);
+
+                    //if can be added, add and remove from the copy list
+                    if(canAddDrop){
+                        inventory.addItem(drop);
+                        iterator.remove();
                     }
-
-                    //clear the drops to not duplicate them
-                    e.getDrops().clear();
-                    return;
                 }
+            }
 
-
-                if (!getMobHopperType(hopper.getLocation()).equalsIgnoreCase(e.getEntity().getType().toString()))
-                    continue;
-
-
-                //add items to the hopper
-                for (ItemStack itemStack : drops) {
-
-                    if (itemStack == null) continue;
-                    //no item spawn remove the not desired drops
-                    hopper.getInventory().addItem(itemStack);
-                }
-
-                //clear the drops to not duplicate them
-                e.getDrops().clear();
-                return;
+            // no more drops to add, stop looping
+            else {
+                break;
             }
         }
 
+        //clear original drops and add the resulting drops after trying to insert them in near hoppers
+        e.getDrops().clear();
+        e.getDrops().addAll(dropsCopy);
     }
 
     @EventHandler
@@ -234,16 +153,24 @@ public class MobHoppersFeatureListener extends AbstractFeatureListener {
 
         //set metadata to the block
         Block block = e.getBlockPlaced();
-
         addMobHopper(block.getLocation(), name);
-
     }
 
     @EventHandler
     public void onMobHopperBreak(BlockBreakEvent e) {
+
+        Location location = e.getBlock().getLocation();
+
         //event cancelled or not a crop hopper
-        if (!e.getBlock().getType().equals(Material.HOPPER) || !isMobHopperLocation(e.getBlock().getLocation()) || e.isCancelled())
+        if (!e.getBlock().getType().equals(Material.HOPPER) || e.isCancelled())
             return;
+
+        MobHopper mobHopper = this.service.fromLocation(location);
+
+        //is not a hopper
+        if(Objects.isNull(mobHopper)){
+            return;
+        }
 
         //no break permission
         if (!e.getPlayer().hasPermission(config.getConfig().getString("Mob-Hoppers.Settings.break-permission"))) {
@@ -253,20 +180,20 @@ public class MobHoppersFeatureListener extends AbstractFeatureListener {
         }
 
         //get the info for the itemstack
-        String mob = getMobHopperType(e.getBlock().getLocation());
+        String mob = mobHopper.getType();
         String name = ChatColor.translateAlternateColorCodes('&', stringUtil.replacePlaceholder(config.getConfig().getString("Mob-Hoppers.Item.name"), "{mob}", mob));
         List<String> lore = stringUtil.translateLore(config.getConfig().getStringList("Mob-Hoppers.Item.lore"));
 
         //create mob hopper
-        ItemStack mobHopper = IInventoryUtil.createItem(1, Material.HOPPER, name, lore, true);
+        ItemStack hopperItem = IInventoryUtil.createItem(1, Material.HOPPER, name, lore, true);
 
         //cancel event and break the hopper
         e.setCancelled(true);
         e.getBlock().setType(Material.AIR);
-        e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), mobHopper);
+        e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), hopperItem);
 
-
-        removeMobHopper(e.getBlock().getLocation());
+        //delete from memory and config
+        this.service.delete(mobHopper);
     }
 
 

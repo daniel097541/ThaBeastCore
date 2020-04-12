@@ -19,4 +19,8 @@ public interface IDataConfig {
     HashMap<String, YamlConfiguration> getConfigs();
 
     boolean exists(String key);
+
+    void delete(String key);
+
+    void loadWithoutCreating(String key);
 }

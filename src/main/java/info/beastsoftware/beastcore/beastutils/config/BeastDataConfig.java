@@ -18,6 +18,15 @@ public abstract class BeastDataConfig implements IDataConfig {
         files = new HashMap<>();
     }
 
+    @Override
+    public void loadWithoutCreating(String name) {
+        File file = new File(folder, name + ".yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        if (!file.exists())
+            return;
+        configs.put(name, config);
+        files.put(name, file);
+    }
 
     @Override
     public void loadConfig(String name) {
@@ -59,5 +68,12 @@ public abstract class BeastDataConfig implements IDataConfig {
     @Override
     public boolean exists(String key) {
         return getConfigs().keySet().contains(key);
+    }
+
+    @Override
+    public void delete(String key) {
+        this.getConfigs().remove(key);
+        this.files.get(key).delete();
+        this.files.remove(key);
     }
 }

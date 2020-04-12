@@ -9,6 +9,7 @@ import info.beastsoftware.beastcore.manager.IHookManager;
 import info.beastsoftware.hookcore.service.FactionsService;
 import info.beastsoftware.hookcore.service.PlayerService;
 import lombok.Getter;
+import me.theminecoder.minecraft.nmsproxy.proxy.NMSProxyProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -43,6 +44,9 @@ public final class BeastCore extends JavaPlugin {
 
     @Inject
     private FactionsService factionsService;
+
+    private final NMSProxyProvider proxyProvider = NMSProxyProvider.get(this);
+
 
     private void inject() {
         Bukkit.getConsoleSender().sendMessage(StrUtils.translate("&dBeastCore &7>> &eInjecting modules!"));
