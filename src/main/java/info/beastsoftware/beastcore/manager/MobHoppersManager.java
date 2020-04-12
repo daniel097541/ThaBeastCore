@@ -161,6 +161,7 @@ public class MobHoppersManager {
 
     private void removeFromConfig(MobHopper mobHopper) {
         this.dataConfig.getConfig().set("data." + mobHopper.getIndex(), null);
+        this.dataConfig.save();
     }
 
     private void removeFromCache(MobHopper mobHopper) {

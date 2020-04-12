@@ -1,6 +1,5 @@
 package info.beastsoftware.beastcore.entity;
 
-import info.beastsoftware.beastcore.beastutils.utils.IInventoryUtil;
 import info.beastsoftware.hookcore.entity.BeastChunk;
 import info.beastsoftware.hookcore.entity.BeastChunkImpl;
 import lombok.EqualsAndHashCode;
