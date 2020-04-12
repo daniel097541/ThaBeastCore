@@ -126,7 +126,7 @@ public class ThrowableCeggsFeatureListener extends AbstractFeatureListener {
                         p.setItemInHand(new ItemStack(Material.AIR));
                     }
                 }
-            } else if (e.getAction() == Action.RIGHT_CLICK_BLOCK &&
+            } else if (e.getAction() == Action.RIGHT_CLICK_BLOCK && p.getItemInHand() != null &&
                     p.getItemInHand().getItemMeta().equals(eggMeta)) {
                 e.setCancelled(true);
             }
