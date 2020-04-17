@@ -37,6 +37,11 @@ public class AlertsGui extends AbstractComplexGui {
 
     @EventHandler
     public void onGuiOpen(AlertsGuiOpenEvent event) {
+
+        if(!this.isFactionsHooked()){
+            return;
+        }
+
         BeastPlayer player = event.getPlayer();
         player.openInventory(getMainMenu());
     }
@@ -194,6 +199,11 @@ public class AlertsGui extends AbstractComplexGui {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
+
+        if(!this.isFactionsHooked()){
+            return;
+        }
+
         Inventory inventory = e.getClickedInventory();
         ItemStack item = e.getCurrentItem();
         BeastPlayer player = this.getPlayer((Player) e.getWhoClicked());

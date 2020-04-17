@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public abstract class BeastDataConfig implements IDataConfig {
 
@@ -75,5 +76,12 @@ public abstract class BeastDataConfig implements IDataConfig {
         this.getConfigs().remove(key);
         this.files.get(key).delete();
         this.files.remove(key);
+    }
+
+    @Override
+    public void deleteAll() {
+        this.configs = new HashMap<>();
+        this.files.forEach((s, f) -> f.delete());
+        this.files = new HashMap<>();
     }
 }

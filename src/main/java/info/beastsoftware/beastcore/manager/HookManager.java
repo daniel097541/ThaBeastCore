@@ -65,7 +65,7 @@ public class HookManager implements IHookManager {
 
     @Override
     public boolean isFactionsHooked() {
-        return Objects.nonNull(this.factionsService.getManager());
+        return this.factionsService.isHooked();
     }
 
     @Override

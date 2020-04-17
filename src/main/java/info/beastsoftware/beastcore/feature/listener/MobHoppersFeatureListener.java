@@ -45,10 +45,9 @@ public class MobHoppersFeatureListener extends AbstractFeatureListener {
 
     private void loadLocations() {
 
-        for (String mob : this.old.getConfigs().keySet()) {
-
+        for (Iterator<String> iterator = this.old.getConfigs().keySet().iterator(); iterator.hasNext();) {
+            String mob = iterator.next();
             YamlConfiguration configuration = this.old.getConfigByName(mob);
-
             for (String idString : configuration.getConfigurationSection("Locations").getKeys(false)) {
 
                 //get chest info from players config
@@ -63,12 +62,10 @@ public class MobHoppersFeatureListener extends AbstractFeatureListener {
                 if (world == null) continue;
 
                 Location location = new Location(world, x, y, z);
-
                 this.service.add(location, mob);
             }
-
-            this.old.delete(mob);
         }
+        this.old.deleteAll();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

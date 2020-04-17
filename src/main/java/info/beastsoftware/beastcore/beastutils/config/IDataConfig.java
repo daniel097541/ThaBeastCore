@@ -22,5 +22,7 @@ public interface IDataConfig {
 
     void delete(String key);
 
+    void deleteAll();
+
     void loadWithoutCreating(String key);
 }

@@ -39,7 +39,5 @@ public class AlertsFeature extends AbstractFeature {
         else{
             this.gui = new AlertsGui(config,dataConfig);
         }
-
-
     }
 }
