@@ -2,8 +2,8 @@ package info.beastsoftware.beastcore.api;
 
 import info.beastsoftware.beastcore.beastutils.config.IConfig;
 import info.beastsoftware.beastcore.feature.IBeastFeature;
-import info.beastsoftware.beastcore.manager.MobMergerManager;
 import info.beastsoftware.beastcore.manager.NVManager;
+import info.beastsoftware.beastcore.service.StackedMobsService;
 import info.beastsoftware.beastcore.struct.FeatureType;
 import info.beastsoftware.hookcore.api.BeastFactionsHookAPI;
 import info.beastsoftware.hookcore.entity.BeastPlayer;
@@ -83,7 +83,7 @@ public interface IBeastCoreAPI {
     // MOB MERGER
     void killAllMergedMobs();
 
-    MobMergerManager getMobsManager();
+    StackedMobsService getMobsService();
 
 
     // PRINTER

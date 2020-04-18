@@ -20,6 +20,7 @@ import info.beastsoftware.beastcore.feature.impl.*;
 import info.beastsoftware.beastcore.manager.*;
 import info.beastsoftware.beastcore.printer.IPrinterManager;
 import info.beastsoftware.beastcore.printer.PrinterManager;
+import info.beastsoftware.beastcore.service.StackedMobsService;
 import info.beastsoftware.hookcore.service.FactionServiceImpl;
 import info.beastsoftware.hookcore.service.FactionsService;
 import info.beastsoftware.hookcore.service.PlayerService;
@@ -77,8 +78,6 @@ public class BeastCoreModule extends AbstractModule {
         this.bind(IDataConfig.class).annotatedWith(FPS.class).toInstance(new FpsBoosterDataConfig(fpsBooster));
         String itemFilter = plugin.getDataFolder() + File.separator + "DataFiles" + File.separator + "Item-Filter";
         this.bind(IDataConfig.class).annotatedWith(ItemFilter.class).toInstance(new ItemFilterDataConfig(itemFilter));
-
-        this.bind(MobMergerManager.class).to(MobMergerManagerImpl.class);
 
         /// CONFIG BINDING
         this.bind(IConfig.class).annotatedWith(MainConfig.class).toInstance(new info.beastsoftware.beastcore.configuration.MainConfig("config.yml"));

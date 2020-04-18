@@ -15,9 +15,9 @@ public class KillMobsCommand extends BeastCommand {
     public void run(CommandSender sender, String[] args) {
         //run command
 
-        if(!isOn()) return;
+        if (!isOn()) return;
 
-        int killed = plugin.getApi().getMobsManager().getStacks().size();
+        int killed = plugin.getApi().getMobsService().getAmountOfStacks();
         plugin.getApi().killAllMergedMobs();
 
         String message = config.getConfig().getString("command.killed-all-msg");

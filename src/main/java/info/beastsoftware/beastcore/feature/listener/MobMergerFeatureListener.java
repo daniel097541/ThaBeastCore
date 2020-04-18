@@ -2,13 +2,15 @@ package info.beastsoftware.beastcore.feature.listener;
 
 import info.beastsoftware.beastcore.BeastCore;
 import info.beastsoftware.beastcore.beastutils.config.IConfig;
-import info.beastsoftware.beastcore.entity.StackedMob;
+import info.beastsoftware.beastcore.entity.StackedMobDiedResponse;
 import info.beastsoftware.beastcore.feature.AbstractFeatureListener;
-import info.beastsoftware.beastcore.manager.MobMergerManager;
+import info.beastsoftware.beastcore.service.StackedMobsService;
 import info.beastsoftware.beastcore.struct.FeatureType;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,38 +23,23 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 
 public class MobMergerFeatureListener extends AbstractFeatureListener {
 
     private final String pasiveMeta = "Mob-Merger.pasive";
     private final String MOBSHEALTHPATH = "Mobs-Health.";
 
-    private final MobMergerManager mobMergerManager;
+    private final StackedMobsService service;
 
 
-    public MobMergerFeatureListener(IConfig config, MobMergerManager mobMergerManager) {
+    public MobMergerFeatureListener(IConfig config) {
         super(config, FeatureType.MOB_MERGER);
-        this.mobMergerManager = mobMergerManager;
+        this.service = new StackedMobsService(config);
     }
 
-    public MobMergerManager getMobMergerManager() {
-        return mobMergerManager;
-    }
-
-    public int getStackedAmount() {
-        return mobMergerManager.getStacks().size();
-    }
-
-    public void killAll() {
-        mobMergerManager.killAll();
-    }
-
-    private boolean mustBePassive(CreatureSpawnEvent e) {
-        return config.getConfig().getStringList("Passive-Mobs.spawn-methods").contains(e.getSpawnReason().toString()) || e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CUSTOM);
+    public StackedMobsService getService() {
+        return service;
     }
 
     private boolean checkIfStackeable(LivingEntity entity) {
@@ -87,7 +74,6 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
         return config.getConfig().getInt(path + "." + type);
     }
 
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMobHealthSpawn(CreatureSpawnEvent event) {
 
@@ -104,15 +90,12 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
         if (health < 0)
             return;
 
-        entity.setHealth((double) health);
-
+        entity.setHealth(health);
     }
-
 
     public boolean spawnOnlySpawnerMobs() {
         return config.getConfig().getBoolean("Mob-Merger.Spawn-Only-Mobs-From-Spawners");
     }
-
 
     private boolean shouldBeStacked(CreatureSpawnEvent.SpawnReason spawnReason) {
 
@@ -124,7 +107,6 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
 
     }
 
-
     private boolean isWorldBlackListed(LivingEntity entity) {
         return config.getConfig().getStringList("Mob-Merger.world-blacklist") != null
                 &&
@@ -132,25 +114,9 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
                         .contains(entity.getLocation().getWorld().getName());
     }
 
-
     private boolean blockEggSpawn(LivingEntity entity) {
         return config.getConfig().getBoolean("Mob-Merger.disable-egg-mobs-merge");
     }
-
-
-    private int getRadius() {
-        return config.getConfig().getInt("Mob-Merger.radius");
-    }
-
-
-    public boolean canBeFullStackKilled(StackedMob stackedMob) {
-        return config.getConfig().getBoolean("Mob-Merger.Kill-Full-Stack.enabled") && config.getConfig().getStringList("Mob-Merger.Kill-Full-Stack.damage-sources").contains(stackedMob.getEntity().getLastDamageCause().getCause().name());
-    }
-
-    public boolean doMultiplyDrops() {
-        return config.getConfig().getBoolean("Mob-Merger.Kill-Full-Stack.multiply-drops");
-    }
-
 
     @EventHandler
     public void onPassiveSpawn(CreatureSpawnEvent event) {
@@ -163,10 +129,7 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
             PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 9999, 999);
             entity.addPotionEffect(effect);
         }
-
-
     }
-
 
     @EventHandler
     public void onTargetAttack(EntityTargetLivingEntityEvent e) {
@@ -176,7 +139,6 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
             return;
         e.setCancelled(true);
     }
-
 
     @EventHandler
     public void onVillagerTrade(PlayerInteractAtEntityEvent event) {
@@ -196,86 +158,40 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
 
     }
 
-
     private boolean isPassiveMob(Entity entity) {
         return entity.hasMetadata(pasiveMeta) || config.getConfig().getStringList("Passive-Mobs.list-of-pasive-mobs").contains(entity.getType().toString());
     }
-
 
     private boolean hasMetadata(LivingEntity livingEntity) {
         return livingEntity.hasMetadata(info.beastsoftware.beastcore.entity.StackedMob.METADATA);
     }
 
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onMobDeath(EntityDeathEvent event) {
-
 
         if (!this.isOn()) {
             return;
         }
 
-
         LivingEntity entity = event.getEntity();
-        info.beastsoftware.beastcore.entity.StackedMob stackedMob = mobMergerManager.getFromEntity(entity);
+        StackedMobDiedResponse response = this.service.killAndRetrieveDrops(entity, event.getDrops(), event.getDroppedExp());
 
-        //is a stack
-        if (Objects.nonNull(stackedMob)) {
-
-
-            //full stack kill
-            if (canBeFullStackKilled(stackedMob)) {
-
-                ////////***** MUST CLONE ITEMS OR THE ORIGINAL ITEM STACK WILL BE CHANGED, RESULTING IN
-                ////////***** DUPPED ITEMS EVERY TIME A MOB DIES
-                List<ItemStack> drops = event.getDrops();
-                List<ItemStack> dropsFinal = new ArrayList<>();
-
-                //get multiplied drops
-                if (doMultiplyDrops()) {
-
-                    for (ItemStack itemStack : drops) {
-                        if (itemStack == null) continue;
-
-                        //// CLONE AND ADD TO THE NEW LIST OF ITEMS
-                        ItemStack cloned = itemStack.clone();
-                        cloned.setAmount(itemStack.getAmount() * stackedMob.getSize());
-                        dropsFinal.add(cloned);
-                    }
-
-                    event.setDroppedExp(event.getDroppedExp() * stackedMob.getSize());
-                }
-
-                //REMOVE OLD LIST OF ITEMS AND SET IT TO THE CLONED AND SIZE EDITED NEW ONE
-                drops.clear();
-                drops.addAll(dropsFinal);
-
-
-                //remove stack and let it death
-                mobMergerManager.killWholeStack(stackedMob);
+        // set drops
+        if (response.isStacked()) {
+            Location location = entity.getLocation();
+            for (ItemStack itemStack : response.getDrops()) {
+                location.getWorld().dropItem(location, itemStack);
             }
-
-
-            //kill one by one
-            else {
-                mobMergerManager.killOne(stackedMob);
-            }
-
-
+            location.getWorld().spawn(location, ExperienceOrb.class).setExperience(response.getExp());
         }
-
     }
 
-
-    private boolean canBeSpawned(LivingEntity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
+    private boolean canBeSpawned(CreatureSpawnEvent.SpawnReason spawnReason) {
         if (spawnOnlySpawnerMobs()) {
-            if (!spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) {
-                return false;
-            }
+            return spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER);
         }
         return true;
     }
-
 
     @EventHandler
     public void onMobSpawn(CreatureSpawnEvent event) {
@@ -288,7 +204,7 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
         LivingEntity entity = event.getEntity();
 
         //check if can spawn
-        if (!this.canBeSpawned(entity, event.getSpawnReason())) {
+        if (!this.canBeSpawned(event.getSpawnReason())) {
             event.setCancelled(true);
             return;
         }
@@ -319,12 +235,8 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
 
         //run 1 tick after to allow metadata being added
         Bukkit.getScheduler().runTaskLater(BeastCore.getInstance(), () -> {
-
-
             if (!this.hasMetadata(entity)) {
-
-                boolean wasStacked = mobMergerManager.tryToStack(entity, 10);
-
+                boolean wasStacked = service.add(entity);
                 //if was stacked, then we should remove the entity
                 if (wasStacked) {
                     entity.remove();
@@ -332,6 +244,4 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
             }
         }, 2L);
     }
-
-
 }

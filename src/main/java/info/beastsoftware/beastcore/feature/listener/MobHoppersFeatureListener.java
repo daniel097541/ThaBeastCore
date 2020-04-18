@@ -6,7 +6,7 @@ import info.beastsoftware.beastcore.beastutils.config.IDataConfig;
 import info.beastsoftware.beastcore.beastutils.utils.IInventoryUtil;
 import info.beastsoftware.beastcore.entity.MobHopper;
 import info.beastsoftware.beastcore.feature.AbstractFeatureListener;
-import info.beastsoftware.beastcore.manager.MobHoppersService;
+import info.beastsoftware.beastcore.service.MobHoppersService;
 import info.beastsoftware.beastcore.struct.FeatureType;
 import org.bukkit.*;
 import org.bukkit.block.Block;

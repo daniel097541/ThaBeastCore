@@ -1,27 +1,27 @@
 package info.beastsoftware.beastcore.entity.impl;
 
 import info.beastsoftware.beastcore.entity.StackedMob;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
+import java.util.Base64;
 import java.util.UUID;
 
 @EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
+@ToString
+@Getter
 public class StackedMobImpl implements StackedMob {
 
-
     private final UUID id = UUID.randomUUID();
-
     private LivingEntity entity;
     private boolean destroyed = false;
+    private final String index;
 
     public StackedMobImpl(LivingEntity entity, int size) {
         this.entity = entity;
         this.setSize(size);
+        this.index = StackedMob.encodeIndex(entity.getType(), entity.getWorld().getName());
     }
 
     @Override

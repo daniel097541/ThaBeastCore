@@ -8,14 +8,13 @@ import info.beastsoftware.beastcore.event.PrinterToggleEvent;
 import info.beastsoftware.beastcore.feature.IBeastFeature;
 import info.beastsoftware.beastcore.feature.IFeatureManager;
 import info.beastsoftware.beastcore.feature.impl.*;
-import info.beastsoftware.beastcore.manager.MobMergerManager;
 import info.beastsoftware.beastcore.manager.NVManager;
 import info.beastsoftware.beastcore.printer.IPrinterManager;
+import info.beastsoftware.beastcore.service.StackedMobsService;
 import info.beastsoftware.beastcore.struct.FeatureType;
 import info.beastsoftware.hookcore.entity.BeastPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -35,9 +34,6 @@ public class BeastCoreAPI implements IBeastCoreAPI {
 
     @Inject
     private IPrinterManager printerManager;
-
-    @Inject
-    private MobMergerManager mobMergerManager;
 
     @Inject
     private NVManager nvManager;
@@ -144,12 +140,12 @@ public class BeastCoreAPI implements IBeastCoreAPI {
 
     @Override
     public void killAllMergedMobs() {
-        this.getMobsManager().killAll();
+        this.getMobsService().killAll();
     }
 
     @Override
-    public MobMergerManager getMobsManager() {
-        return this.mobMergerManager;
+    public StackedMobsService getMobsService() {
+        return ((MobMergerFeature) this.featureManager.getFeatureByType(FeatureType.MOB_MERGER)).getService();
     }
 
 

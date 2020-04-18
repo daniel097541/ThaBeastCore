@@ -1,18 +1,16 @@
-package info.beastsoftware.beastcore.manager;
+package info.beastsoftware.beastcore.service;
 
 import info.beastsoftware.beastcore.beastutils.config.IConfig;
 import info.beastsoftware.beastcore.beastutils.utils.ILocationUtil;
 import info.beastsoftware.beastcore.entity.MobHopper;
-import info.beastsoftware.beastcore.struct.Mob;
+import info.beastsoftware.beastcore.manager.MobHoppersManager;
 import info.beastsoftware.hookcore.entity.BeastChunkImpl;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.Inventory;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,11 +24,11 @@ public class MobHoppersService {
     }
 
 
-    public MobHopper get(Location location, EntityType entityType){
+    public MobHopper get(Location location, EntityType entityType) {
         return this.mobHoppersManager.get(location, entityType);
     }
 
-    public MobHopper fromLocation(Location location){
+    public MobHopper fromLocation(Location location) {
         return this.mobHoppersManager.getFromLocation(location);
     }
 
@@ -40,7 +38,7 @@ public class MobHoppersService {
     }
 
 
-    public void delete(MobHopper mobHopper){
+    public void delete(MobHopper mobHopper) {
         this.mobHoppersManager.remove(mobHopper);
     }
 
@@ -52,7 +50,7 @@ public class MobHoppersService {
         }
         return hoppers
                 .stream()
-                .sorted( (h1, h2) -> (int) (h1.distanceTo(location) - h2.distanceTo(location)))
+                .sorted((h1, h2) -> (int) (h1.distanceTo(location) - h2.distanceTo(location)))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

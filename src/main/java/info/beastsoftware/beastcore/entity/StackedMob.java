@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.Base64;
 import java.util.UUID;
 
 public interface StackedMob extends APIAccessor {
@@ -21,6 +22,12 @@ public interface StackedMob extends APIAccessor {
     boolean wasDestroyed();
 
     void setDestroyed();
+
+    String getIndex();
+
+    static String encodeIndex(EntityType entityType, String worldName){
+        return Base64.getEncoder().encodeToString((worldName + entityType.name()).getBytes());
+    }
 
     default boolean isInWorld(World world) {
         return this.getEntity().getWorld().equals(world);
