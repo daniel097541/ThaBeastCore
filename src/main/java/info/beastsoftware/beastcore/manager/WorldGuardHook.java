@@ -24,4 +24,15 @@ public class WorldGuardHook implements IWorldGuardHook {
                 .anyMatch(f -> f.equals(StateFlag.State.DENY));
 
     }
+
+    public boolean areExplosionsDisabledHere(Location loc){
+        return WGBukkit
+                .getRegionManager(loc.getWorld())
+                .getApplicableRegions(loc)
+                .getRegions()
+                .stream()
+                .map(region -> region.getFlag(DefaultFlag.CREEPER_EXPLOSION))
+                .filter(Objects::nonNull)
+                .anyMatch(f -> f.equals(StateFlag.State.DENY));
+    }
 }

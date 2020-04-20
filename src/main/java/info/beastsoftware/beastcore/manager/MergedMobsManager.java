@@ -50,6 +50,7 @@ public class MergedMobsManager {
                     .stream()
                     .filter(m -> m.getSize() < maxSize)
                     .filter(m -> m.getEntity().getLocation().distance(entity.getLocation()) <= radius)
+                    .filter(StackedMob::check)
                     .min((m1, m2) -> (int) (m1.getEntity().getLocation().distance(entity.getLocation()) - m2.getEntity().getLocation().distance(entity.getLocation())))
                     .orElse(null);
         } else {

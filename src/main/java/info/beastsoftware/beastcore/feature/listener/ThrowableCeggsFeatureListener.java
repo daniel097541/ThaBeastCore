@@ -1,10 +1,13 @@
 package info.beastsoftware.beastcore.feature.listener;
 
 import info.beastsoftware.beastcore.BeastCore;
+import info.beastsoftware.beastcore.api.IBeastCoreAPI;
 import info.beastsoftware.beastcore.beastutils.config.IConfig;
 import info.beastsoftware.beastcore.event.ThrowableEggsGiveEvent;
 import info.beastsoftware.beastcore.feature.AbstractFeatureListener;
+import info.beastsoftware.beastcore.manager.IWorldGuardHook;
 import info.beastsoftware.beastcore.struct.FeatureType;
+import info.beastsoftware.hookcore.entity.BeastFaction;
 import info.beastsoftware.hookcore.entity.BeastPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,6 +46,21 @@ public class ThrowableCeggsFeatureListener extends AbstractFeatureListener {
         super(config, FeatureType.THROWABLE_CEGGS);
     }
 
+    private boolean canBreak(Location location){
+        boolean canBreakFaction = true;
+        boolean canBreakWorldGuard = true;
+        if(this.isFactionsHooked()){
+            BeastFaction factionAt = this.getAtLocation(location);
+            canBreakFaction = !factionAt.isSafezone() && !factionAt.isWarzone();
+        }
+
+        IWorldGuardHook worldGuardHook = BeastCore.getInstance().getHookManager().getWorldGuardHook();
+        if(Objects.nonNull(worldGuardHook)){
+            canBreakWorldGuard = !worldGuardHook.areExplosionsDisabledHere(location);
+        }
+        return canBreakFaction && canBreakWorldGuard;
+    }
+
     public String Translate(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
@@ -64,10 +82,13 @@ public class ThrowableCeggsFeatureListener extends AbstractFeatureListener {
         return size;
     }
 
+
+
     @EventHandler
     public void onCegg(PlayerInteractEvent e) {
         try {
             Player p = e.getPlayer();
+            BeastPlayer beastPlayer = this.getPlayer(p);
 
 
             Material material = this.getCeggMaterial();
@@ -89,6 +110,13 @@ public class ThrowableCeggsFeatureListener extends AbstractFeatureListener {
                 if (p.getItemInHand().getItemMeta().equals(eggMeta)) {
                     int amount = p.getItemInHand().getAmount();
                     if (amount > 1) {
+
+                        //cannot throw eggs here
+                        if(!this.canBreak(p.getLocation())){
+                            beastPlayer.sms(this.config.getConfig().getString("messages.deny-throw"));
+                            return;
+                        }
+
                         p.getItemInHand().setAmount(amount - 1);
                         final Item grenade = p.getWorld().dropItem(p.getEyeLocation(), egg);
                         grenade.setVelocity(p.getEyeLocation().getDirection());
@@ -98,7 +126,9 @@ public class ThrowableCeggsFeatureListener extends AbstractFeatureListener {
                                 Location location = grenade.getLocation();
                                 Creeper creeper = (Creeper) location.getWorld().spawnEntity(location, EntityType.CREEPER);
                                 Bukkit.getScheduler().runTaskLater(BeastCore.getInstance(), () -> {
-                                    location.getWorld().createExplosion(location, this.getExplosionSize());
+                                    if(this.canBreak(location)) {
+                                        location.getWorld().createExplosion(location, this.getExplosionSize());
+                                    }
                                     creeper.remove();
                                 }, 20L);
                                 grenade.remove();
@@ -115,7 +145,9 @@ public class ThrowableCeggsFeatureListener extends AbstractFeatureListener {
                                 Location location = grenade.getLocation();
                                 Creeper creeper = (Creeper) location.getWorld().spawnEntity(location, EntityType.CREEPER);
                                 Bukkit.getScheduler().runTaskLater(BeastCore.getInstance(), () -> {
-                                    location.getWorld().createExplosion(location, this.getExplosionSize());
+                                    if(this.canBreak(location)) {
+                                        location.getWorld().createExplosion(location, this.getExplosionSize());
+                                    }
                                     creeper.remove();
                                 }, 20L);
                                 grenade.remove();

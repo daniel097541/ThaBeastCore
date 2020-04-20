@@ -1,5 +1,6 @@
 package info.beastsoftware.beastcore.service;
 
+import info.beastsoftware.beastcore.BeastCore;
 import info.beastsoftware.beastcore.beastutils.config.IConfig;
 import info.beastsoftware.beastcore.beastutils.utils.StrUtils;
 import info.beastsoftware.beastcore.entity.StackedMob;
@@ -8,22 +9,26 @@ import info.beastsoftware.beastcore.entity.impl.StackedMobImpl;
 import info.beastsoftware.beastcore.manager.MergedMobsManager;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-@AllArgsConstructor
 public class StackedMobsService {
 
     private final IConfig config;
     private final MergedMobsManager mergedMobsManager = new MergedMobsManager();
 
+
+    public StackedMobsService(IConfig config) {
+        this.config = config;
+        this.scheduleHealthCheck();
+    }
+
+    private void scheduleHealthCheck(){
+        Bukkit.getScheduler().runTaskTimer(BeastCore.getInstance(), this::healthCheck, 120 * 20L, 120 * 20L);
+    }
 
     public int getMaxAmount(EntityType entityType) {
         boolean perMobSizes = this.config.getConfig().getBoolean("Mob-Merger.per-mob-max-stack-sizes.enabled");
@@ -63,7 +68,7 @@ public class StackedMobsService {
         return name;
     }
 
-    private int getRadiusToStack(){
+    private int getRadiusToStack() {
         return 10;
     }
 
@@ -91,7 +96,7 @@ public class StackedMobsService {
         return config.getConfig().getBoolean("Mob-Merger.Kill-Full-Stack.enabled") && config.getConfig().getStringList("Mob-Merger.Kill-Full-Stack.damage-sources").contains(stackedMob.getEntity().getLastDamageCause().getCause().name());
     }
 
-    private boolean canMultiplyDrops(StackedMob stackedMob) {
+    private boolean canMultiplyDrops() {
         return config.getConfig().getBoolean("Mob-Merger.Kill-Full-Stack.multiply-drops");
     }
 
@@ -108,22 +113,21 @@ public class StackedMobsService {
             int size = stackedMob.getSize();
 
             if (this.isFullStackKill(stackedMob)) {
+
                 this.mergedMobsManager.remove(stackedMob);
-                stackedMob.destroy();
 
                 //multiply drops
-                if (this.canMultiplyDrops(stackedMob)) {
-                    drops = new ArrayList<>();
+                if (this.canMultiplyDrops()) {
+                    drops.clear();
+
                     for (ItemStack itemStack : originalDrops) {
-                        if (itemStack == null || itemStack.getType().equals(Material.AIR)) {
-                            continue;
-                        }
-                        //// CLONE AND ADD TO THE NEW LIST OF ITEMS
                         ItemStack cloned = itemStack.clone();
-                        cloned.setAmount(itemStack.getAmount() * stackedMob.getSize());
+                        int amount = itemStack.getAmount() * size;
+                        cloned.setAmount(amount);
                         drops.add(cloned);
                     }
 
+                    originalDrops.clear();
                     exp = originalExp * size;
                 }
             } else {
@@ -148,5 +152,15 @@ public class StackedMobsService {
 
     public int getAmountOfStacks() {
         return this.mergedMobsManager.getAll().size();
+    }
+
+    public void healthCheck(){
+        Collection<StackedMob> mobs = new HashSet<>(this.mergedMobsManager.getAll());
+        for(StackedMob mob : mobs){
+            boolean isValid = mob.check();
+            if(!isValid){
+                this.mergedMobsManager.remove(mob);
+            }
+        }
     }
 }

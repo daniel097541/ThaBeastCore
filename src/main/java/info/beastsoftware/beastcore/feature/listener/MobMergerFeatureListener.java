@@ -176,14 +176,9 @@ public class MobMergerFeatureListener extends AbstractFeatureListener {
         LivingEntity entity = event.getEntity();
         StackedMobDiedResponse response = this.service.killAndRetrieveDrops(entity, event.getDrops(), event.getDroppedExp());
 
-        // set drops
-        if (response.isStacked()) {
-            Location location = entity.getLocation();
-            for (ItemStack itemStack : response.getDrops()) {
-                location.getWorld().dropItem(location, itemStack);
-            }
-            location.getWorld().spawn(location, ExperienceOrb.class).setExperience(response.getExp());
-        }
+        event.setDroppedExp(response.getExp());
+        event.getDrops().clear();
+        event.getDrops().addAll(response.getDrops());
     }
 
     private boolean canBeSpawned(CreatureSpawnEvent.SpawnReason spawnReason) {

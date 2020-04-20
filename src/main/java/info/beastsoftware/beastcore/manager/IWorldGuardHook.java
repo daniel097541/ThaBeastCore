@@ -5,5 +5,5 @@ import org.bukkit.Location;
 public interface IWorldGuardHook {
 
     boolean isPvPDisabledHere(Location location);
-
+    boolean areExplosionsDisabledHere(Location location);
 }

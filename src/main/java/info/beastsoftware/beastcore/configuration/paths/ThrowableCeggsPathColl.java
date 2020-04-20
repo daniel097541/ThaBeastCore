@@ -27,6 +27,8 @@ public class ThrowableCeggsPathColl extends PathColl {
         addPath("command.no-permission-message", "&cYou dont have permission!");
         addPath("command.given-egg", "&6You gave &a{amount} &cegg/s to &7{player}");
         addPath("command.invalid-player", "&cThe player &7{player} &cdoes not exist!");
+
+        addPath("messages.deny-throw", "&cYou cannot use throwable eggs in this region!");
     }
 
 }

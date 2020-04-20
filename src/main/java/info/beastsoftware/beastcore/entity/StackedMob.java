@@ -7,6 +7,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Base64;
+import java.util.Objects;
 import java.util.UUID;
 
 public interface StackedMob extends APIAccessor {
@@ -119,7 +120,7 @@ public interface StackedMob extends APIAccessor {
     }
 
     default boolean check() {
-        return !this.getEntity().isDead() && this.getSize() >= 1;
+        return Objects.nonNull(this.getEntity()) && !this.getEntity().isDead() && this.getSize() >= 1;
     }
 
 }

@@ -29,7 +29,7 @@ public class AntiItemPlaceFeatureListener extends AbstractFeatureListener {
     @EventHandler
     public void onBoatPlace(PlayerInteractEvent e) {
 
-        if (!isOn()) return;
+        if (!isOn() || !isFactionsHooked()) return;
 
         if (!e.getPlayer().hasPermission(config.getConfig().getString("Anti-Boat-Place.bypass-permission"))) {
             if (getPlayer(e.getPlayer()).isInOthersLand() && e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getPlayer().getItemInHand().getType().equals(material)) {
