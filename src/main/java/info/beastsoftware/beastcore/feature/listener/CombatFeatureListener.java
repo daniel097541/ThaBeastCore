@@ -87,6 +87,7 @@ public class CombatFeatureListener extends AbstractFeatureListener {
             }
 
 
+
             //check if mob attacks player
             if (damagerIsMob) {
                 if (damagedIsPlayer)
@@ -713,7 +714,6 @@ public class CombatFeatureListener extends AbstractFeatureListener {
 
     private void sendUpdateToDrawBarrier(BeastPlayer player, Material material, int damage, Set<Location> changedBlocks) {
         changedBlocks
-                .stream()
                 .forEach(l -> player.getBukkitPlayer().sendBlockChange(l, material, (byte) damage));
     }
 

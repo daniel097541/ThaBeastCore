@@ -185,7 +185,7 @@ public class AlertsFeatureListener extends AbstractFeatureListener {
 
         if (!isOn()) return;
 
-        String id = null;
+        String id = faction.getId();
         String PATH = "Faction-Alerts.messages.";
         String message = config.getConfig().getString(PATH + alert.toString());
 
