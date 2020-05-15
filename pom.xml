@@ -6,7 +6,7 @@
 
     <groupId>BeastSoftware</groupId>
     <artifactId>BeastCore</artifactId>
-    <version>4.6.0.2-STABLE</version>
+    <version>4.6.1.0-STABLE</version>
     <packaging>jar</packaging>
     <name>BeastCore</name>
 

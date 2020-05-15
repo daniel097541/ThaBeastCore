@@ -47,6 +47,7 @@ public class CombatPathColl extends PathColl {
         addPath("Combat-Tag.reset-on-enderpearl", true);
         addPath("Combat-Tag.disable-teleport", true);
         addPath("Combat-Tag.no-teleport-in-combat", "&cYou can´t teleport while in combat!!");
+        addPath("Combat-Tag.deny-mining-in-combat", false);
 
         addPath("Combat-Tag.deny-access-to-no-pvp-zones", true);
         addPath("Combat-Tag.barrier-material-for-no-pvp-zones", "STAINED_GLASS");

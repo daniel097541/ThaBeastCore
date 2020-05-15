@@ -785,8 +785,9 @@ public class CombatFeatureListener extends AbstractFeatureListener {
 
 
         BeastPlayer player = this.getPlayer(event.getPlayer());
+        boolean denyMining = this.getConfig().getConfig().getBoolean("Combat-Tag.deny-mining-in-combat");
 
-        if (isOnCombat(player)) {
+        if (isOnCombat(player) && denyMining) {
             event.setCancelled(true);
         }
 
