@@ -252,12 +252,19 @@
             <scope>compile</scope>
         </dependency>
 
+
+        <!--  YOU NEED TO CLONE THIS REPO AND INSTALL IT IN YOUR LOCAL M2 REPO:  https://github.com/daniel097541/BeastFactionsHook    -->
         <dependency>
             <groupId>info.beastsoftware</groupId>
             <artifactId>core</artifactId>
-            <systemPath>${project.basedir}/dependencies/core-1.0.jar</systemPath>
             <version>1.0</version>
-            <scope>system</scope>
+            <scope>compile</scope>
         </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.massivecraft</groupId>-->
+<!--            <artifactId>Factions</artifactId>-->
+<!--        </dependency>-->
+
     </dependencies>
 </project>

@@ -116,15 +116,16 @@ public class ChunkBustersFeatureListener extends AbstractFeatureListener {
 
         int doIt = config.getConfig().getInt("Chunk-Busters.Settings.explode-beastCooldown");
 
-        List<Chunk> chunks;
+        List<Chunk> chunks = ILocationUtil.getChunkSquare(radius, location.getBukkitLocation());
         boolean denyBreakOthersLand = !config.getConfig().getBoolean("Chunk-Busters.Settings.break-other-factions-chunks-in-radius");
 
         BeastFaction faction = player.getMyFaction();
 
         if (denyBreakOthersLand) {
-            chunks = faction.getChunksClaimedAroundLocation(location, radius).stream().map(BeastChunk::getBukkitChunk).collect(Collectors.toList());
-        } else {
-            chunks = ILocationUtil.getChunkSquare(radius, location.getBukkitLocation());
+            chunks = chunks
+                    .stream()
+                    .filter(c -> new BeastChunkImpl(c).getFaction().getId().equals(faction.getId()))
+                    .collect(Collectors.toList());
         }
 
 
