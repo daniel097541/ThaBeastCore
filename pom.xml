@@ -255,14 +255,9 @@
         <dependency>
             <groupId>info.beastsoftware</groupId>
             <artifactId>core</artifactId>
+            <systemPath>${project.basedir}/dependencies/core-1.0.jar</systemPath>
             <version>1.0</version>
-            <scope>compile</scope>
+            <scope>system</scope>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>com.massivecraft</groupId>-->
-<!--            <artifactId>Factions</artifactId>-->
-<!--        </dependency>-->
-
     </dependencies>
 </project>
