@@ -244,7 +244,7 @@ public class PrinterFeatureListener extends AbstractFeatureListener {
 
         Block block = e.getBlockPlaced();
         Material material = block.getType();
-        ItemStack itemStack = new ItemStack(material);
+        ItemStack itemStack = player.getItemInHand();//new ItemStack(material);
 
 
         //blacklisted blocks
