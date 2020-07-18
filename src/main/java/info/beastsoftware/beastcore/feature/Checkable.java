@@ -11,4 +11,5 @@ public interface Checkable {
                 .getConfig()
                 .getBoolean(this.getFeatureType().getPath());
     }
+
 }

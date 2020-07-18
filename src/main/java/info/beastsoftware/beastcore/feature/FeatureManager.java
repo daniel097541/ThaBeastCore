@@ -282,7 +282,6 @@ public class FeatureManager implements IFeatureManager {
     private IBeastFeature potion;
 
 
-
     @Placeholders
     @Inject
     private IBeastFeature placeholders;
@@ -347,6 +346,10 @@ public class FeatureManager implements IFeatureManager {
     @Inject
     @ThrowableCegss
     private IBeastFeature throwableCeggs;
+
+    @Inject
+    @HarvesterHoes
+    private IBeastFeature harvesterHoes;
 
     public FeatureManager() {
         Bukkit.getConsoleSender().sendMessage(StrUtils.translate("&dBeastCore &7>> &eFeature manager initialized!"));

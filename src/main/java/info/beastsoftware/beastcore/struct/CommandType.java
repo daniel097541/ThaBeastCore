@@ -1,6 +1,7 @@
 package info.beastsoftware.beastcore.struct;
 
 public enum CommandType {
+    HARVESTER_HOES("harvesterhoes", "enabled", "command.permission", "command.no-permission-message", null),
     THROWABLE_EGGS("throwableggs", "enabled", "command.permission", "command.no-permission-message", null),
     NV("nv", "enabled", "permission", "no-permission-message", null),
     DEBUFF("debuff", "enabled", "permission", "no-permission-message", null),

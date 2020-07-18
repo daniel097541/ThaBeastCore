@@ -2,6 +2,7 @@ package info.beastsoftware.beastcore.struct;
 
 public enum FeatureType {
 
+    HARVESTER_HOES("enabled"),
 
     THROWABLE_CEGGS("enabled"),
 
